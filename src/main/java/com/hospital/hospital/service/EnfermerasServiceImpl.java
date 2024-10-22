@@ -1,11 +1,7 @@
 package com.hospital.hospital.service;
 
-import com.hospital.hospital.dto.ConsultorioDto;
-import com.hospital.hospital.dto.EnfermerasDto;
-import com.hospital.hospital.entity.Consultorio;
 import com.hospital.hospital.entity.Enfermeras;
 import com.hospital.hospital.exception.MessageNotFoundException;
-import com.hospital.hospital.repository.ConsultorioRepository;
 import com.hospital.hospital.repository.EnfermerasRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -31,13 +27,10 @@ public class EnfermerasServiceImpl implements EnfermerasService {
     }
 
     @Override
-    public ResponseEntity<List<EnfermerasDto>> findAll() {
+    public ResponseEntity<List<Enfermeras>> findAll() {
         List<Enfermeras> enfermera = enfermerasRepository.findAll();
         if (!enfermera.isEmpty()) {
-            List<EnfermerasDto> enfermerasDtos = enfermera.stream()
-                    .map(enfermeras -> modelMapper.map(enfermeras, EnfermerasDto.class))
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(enfermerasDtos, HttpStatus.OK);
+            return new ResponseEntity<>(enfermera, HttpStatus.OK);
         }
         else {
             log.warn("Lista de enfermeras esta vacia");

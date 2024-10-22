@@ -1,11 +1,9 @@
 package com.hospital.hospital.controller;
 
-import com.hospital.hospital.dto.EspecialidadDto;
+import com.hospital.hospital.entity.Especialidad;
 import com.hospital.hospital.service.EspecialidadService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,7 +19,12 @@ public class EspecialidadController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<EspecialidadDto>> findAll() {
+    public ResponseEntity<List<Especialidad>> findAll() {
         return especialidadService.findAll();
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Especialidad> create(@RequestBody Especialidad especialidad) {
+        return especialidadService.create(especialidad);
     }
 }

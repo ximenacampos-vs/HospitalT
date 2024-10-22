@@ -1,11 +1,9 @@
 package com.hospital.hospital.entity;
 
-import com.hospital.hospital.enums.TipoDocumento;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 
-import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -36,9 +34,7 @@ public class Paciente {
     @Email
     private String email;
 
-    @ElementCollection(targetClass = TipoDocumento.class)
-    @CollectionTable(name = "paciente_tipo_documento", joinColumns = @JoinColumn(name = "paciente_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<TipoDocumento> tipoDocumento;
+    @Column(nullable = false, length = 5)
+    private String tipoDocumento;
 
 }

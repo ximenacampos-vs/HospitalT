@@ -1,11 +1,7 @@
 package com.hospital.hospital.service;
 
-import com.hospital.hospital.dto.EspecialidadDto;
-import com.hospital.hospital.dto.PacienteDto;
-import com.hospital.hospital.entity.Especialidad;
 import com.hospital.hospital.entity.Paciente;
 import com.hospital.hospital.exception.MessageNotFoundException;
-import com.hospital.hospital.repository.EspecialidadRepository;
 import com.hospital.hospital.repository.PacienteRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -31,13 +27,10 @@ public class PacienteServiceImpl implements PacienteService{
     }
 
     @Override
-    public ResponseEntity<List<PacienteDto>> findAll() {
+    public ResponseEntity<List<Paciente>> findAll() {
         List<Paciente> pacientes = pacienteRepository.findAll();
         if (!pacientes.isEmpty()) {
-            List<PacienteDto> pacienteDtos = pacientes.stream()
-                    .map(paciente -> modelMapper.map(pacientes, PacienteDto.class))
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(pacienteDtos, HttpStatus.OK);
+            return new ResponseEntity<>(pacientes, HttpStatus.OK);
         }
         else {
             log.warn("Lista de pacientes esta vacia");

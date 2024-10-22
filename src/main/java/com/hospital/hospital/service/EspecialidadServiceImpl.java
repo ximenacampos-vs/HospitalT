@@ -1,7 +1,7 @@
 package com.hospital.hospital.service;
 
-import com.hospital.hospital.dto.EspecialidadDto;
 import com.hospital.hospital.entity.Especialidad;
+import com.hospital.hospital.exception.MessageConflictException;
 import com.hospital.hospital.exception.MessageNotFoundException;
 import com.hospital.hospital.repository.EspecialidadRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,17 +30,31 @@ public class EspecialidadServiceImpl implements EspecialidadService{
     }
 
     @Override
-    public ResponseEntity<List<EspecialidadDto>> findAll() {
+    public ResponseEntity<List<Especialidad>> findAll() {
         List<Especialidad> especialidades = especialidadRepository.findAll();
         if (!especialidades.isEmpty()) {
-            List<EspecialidadDto> especialidadDtos = especialidades.stream()
-                    .map(especialidad -> modelMapper.map(especialidad, EspecialidadDto.class))
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(especialidadDtos, HttpStatus.OK);
+            return new ResponseEntity<>(especialidades, HttpStatus.OK);
         }
         else {
             log.warn("Lista de especialidades esta vacia");
             throw new MessageNotFoundException("Lista de especialidades esta vacia");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Especialidad> create(Especialidad especialidad) {
+        especialidad.setNombre(especialidad.getNombre().toUpperCase());
+        if (!especialidadRepository.existsByNombre(especialidad.getNombre())){
+            especialidad.setNombre(especialidad.getNombre().toUpperCase());
+            especialidadRepository.save(especialidad);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(especialidad.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(especialidad);
+        } else {
+            throw new MessageConflictException("La especialidad ya existe");
         }
     }
 }

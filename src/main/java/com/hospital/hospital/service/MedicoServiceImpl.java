@@ -1,6 +1,5 @@
 package com.hospital.hospital.service;
 
-import com.hospital.hospital.dto.MedicoDto;
 import com.hospital.hospital.entity.Medico;
 import com.hospital.hospital.exception.MessageNotFoundException;
 import com.hospital.hospital.repository.MedicoRepository;
@@ -28,13 +27,10 @@ public class MedicoServiceImpl implements MedicoService {
     }
 
     @Override
-    public ResponseEntity<List<MedicoDto>> findAll() {
+    public ResponseEntity<List<Medico>> findAll() {
         List<Medico> medicos = medicoRepository.findAll();
         if (!medicos.isEmpty()) {
-            List<MedicoDto> medicoDtos = medicos.stream()
-                    .map(medico -> modelMapper.map(medicos, MedicoDto.class))
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(medicoDtos, HttpStatus.OK);
+            return new ResponseEntity<>(medicos, HttpStatus.OK);
         }
         else {
             log.warn("Lista de medicos esta vacia");

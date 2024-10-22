@@ -1,12 +1,12 @@
 package com.hospital.hospital.service;
 
-import com.hospital.hospital.dto.DisponibilidadDto;
+import com.hospital.hospital.entity.Disponibilidad;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface DisponibilidadService {
 
-    ResponseEntity<List<DisponibilidadDto>> findAll();
+    ResponseEntity<List<Disponibilidad>> findAll();
 
 }

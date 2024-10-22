@@ -1,7 +1,7 @@
 package com.hospital.hospital.service;
 
-import com.hospital.hospital.dto.ConsultorioDto;
 import com.hospital.hospital.entity.Consultorio;
+import com.hospital.hospital.exception.MessageConflictException;
 import com.hospital.hospital.exception.MessageNotFoundException;
 import com.hospital.hospital.repository.ConsultorioRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,17 +30,29 @@ public class ConsultorioServiceImpl implements ConsultorioService {
     }
 
     @Override
-   public ResponseEntity<List<ConsultorioDto>> findAll() {
+   public ResponseEntity<List<Consultorio>> findAll() {
         List<Consultorio> consultorios = consultorioRepository.findAll();
         if (!consultorios.isEmpty()) {
-            List<ConsultorioDto> consultorioDtos = consultorios.stream()
-                    .map(consultorio -> modelMapper.map(consultorio, ConsultorioDto.class))
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(consultorioDtos, HttpStatus.OK);
+            return new ResponseEntity<>(consultorios, HttpStatus.OK);
         }
         else {
             log.warn("Lista de consultorios esta vacia");
             throw new MessageNotFoundException("Lista de consultorios esta vacia");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Consultorio> create(Consultorio consultorio) {
+        if (!consultorioRepository.existsByConsultorio(consultorio.getConsultorio())) {
+            consultorioRepository.save(consultorio);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(consultorio.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(consultorio);
+        } else {
+            throw new MessageConflictException("el consultorio ya existe");
         }
     }
 }

@@ -1,9 +1,7 @@
 package com.hospital.hospital.controller;
 
-import com.hospital.hospital.dto.MedicoDto;
-import com.hospital.hospital.dto.PacienteDto;
+import com.hospital.hospital.entity.Medico;
 import com.hospital.hospital.service.MedicoService;
-import com.hospital.hospital.service.PacienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +21,7 @@ public class MedicoController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<MedicoDto>> findAll() {
+    public ResponseEntity<List<Medico>> findAll() {
         return medicoService.findAll();
     }
 }
