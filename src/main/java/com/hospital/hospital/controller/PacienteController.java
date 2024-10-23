@@ -1,11 +1,10 @@
 package com.hospital.hospital.controller;
 
+import com.hospital.hospital.entity.Consultorio;
 import com.hospital.hospital.entity.Paciente;
 import com.hospital.hospital.service.PacienteService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +26,8 @@ public class PacienteController {
         return pacienteService.findAll();
     }
 
+    @PostMapping("/create")
+    public ResponseEntity<Paciente> create(@RequestBody Paciente paciente) {
+        return pacienteService.create(paciente);
+    }
 }

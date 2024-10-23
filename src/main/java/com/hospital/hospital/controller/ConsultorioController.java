@@ -18,7 +18,6 @@ public class ConsultorioController {
         this.consultorioService = consultorioService;
     }
 
-
     @GetMapping("/all")
     public ResponseEntity<List<Consultorio>> findAll() {
         return consultorioService.findAll();

@@ -8,7 +8,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,4 +39,20 @@ public class MedicoServiceImpl implements MedicoService {
             throw new MessageNotFoundException("Lista de medicos esta vacia");
         }
     }
+
+    @Override
+    public ResponseEntity<Medico> create(Medico medico) {
+        if (!medicoRepository.existsById(medico.getCodigo())){
+            medicoRepository.save(medico);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(medico.getCodigo())
+                    .toUri();
+            return ResponseEntity.created(location).body(medico);
+        }else{
+            throw new MessageNotFoundException("Medico existente");
+        }
+    }
+
 }

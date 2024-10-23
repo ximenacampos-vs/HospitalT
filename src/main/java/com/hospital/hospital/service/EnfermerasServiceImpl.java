@@ -1,6 +1,8 @@
 package com.hospital.hospital.service;
 
+
 import com.hospital.hospital.entity.Enfermeras;
+import com.hospital.hospital.exception.MessageConflictException;
 import com.hospital.hospital.exception.MessageNotFoundException;
 import com.hospital.hospital.repository.EnfermerasRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +10,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service(value = "enfermerasService")
 @Slf4j
@@ -37,4 +41,21 @@ public class EnfermerasServiceImpl implements EnfermerasService {
             throw new MessageNotFoundException("Lista de enfermeras esta vacia");
         }
     }
+
+    @Override
+    public ResponseEntity<Enfermeras> create(Enfermeras enfermeras) {
+        if (!enfermerasRepository.existsByCodigo(enfermeras.getCodigo())) {
+            enfermerasRepository.save(enfermeras);
+            URI location = ServletUriComponentsBuilder
+                  .fromCurrentRequest()
+                  .path("/{id}")
+                    .buildAndExpand(enfermeras.getCodigo())
+                  .toUri();
+            return ResponseEntity.created(location).body(enfermeras);
+        }else{
+            throw new MessageConflictException("Enfermeras ya existe en el sistema");
+        }
+
+    }
+
 }

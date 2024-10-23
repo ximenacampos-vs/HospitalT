@@ -1,6 +1,8 @@
 package com.hospital.hospital.service;
 
+
 import com.hospital.hospital.entity.Paciente;
+import com.hospital.hospital.exception.MessageConflictException;
 import com.hospital.hospital.exception.MessageNotFoundException;
 import com.hospital.hospital.repository.PacienteRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +10,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service(value = "pacienteService")
 @Slf4j
@@ -37,4 +41,20 @@ public class PacienteServiceImpl implements PacienteService{
             throw new MessageNotFoundException("Lista de pacientes esta vacia");
         }
     }
-}
+
+    @Override
+    public ResponseEntity<Paciente> create(Paciente paciente) {
+        if (!pacienteRepository.existsById(paciente.getId())) {
+            pacienteRepository.save(paciente);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(paciente.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(paciente);
+        }else{
+            throw new MessageConflictException("Paciente ya existe en el sistema");
+            }
+        }
+    }
+
